@@ -47,15 +47,29 @@
 
             var data = this.data('inputPopover'),
                 popoverId = '#' + data.id;
-            var width = this.outerWidth(),
+
+            var width,
                 left,
                 top;
+            if (!settings.parentWidth) {
+                width = this.outerWidth();
+            } else {
+                width = $(settings.parentWidth).outerWidth();
+            }
             //сбор информации для позиционирования
             if (!settings.container) {
-                left = this.position().left;
+                if (!settings.parentWidth) {
+                    left = this.position().left;
+                } else {
+                    left = $(settings.parentWidth).position().left;
+                }
                 top = this.position().top + this.outerHeight();
             } else {
-                left = this.offset().left;
+                if (!settings.parentWidth) {
+                    left = this.offset().left;
+                } else {
+                    left = $(settings.parentWidth).offset().left;
+                }
                 top = this.offset().top + this.outerHeight();
             }
             //если не создан поповер - создать
@@ -78,7 +92,7 @@
             }
             $(popoverId).show();
             this.data('inputPopover').shown = true;
-            $(popoverId).css({top: top, left: left, width: width});
+            $(popoverId).css({top: top, left: left, width: width, position: 'absolute'});
 
         },
 
@@ -99,9 +113,10 @@
     $.fn.inputPopover = function (method) {
 
         var DEFAULTS = {
-            container: false,
-            class: 'search-popover',
-            focusOut: true
+            container: false, // контейнер
+            class: 'search-popover', // класс
+            focusOut: true,
+            parentWidth: false // родитель от которого вычисляется ширина
         }
 
         if (typeof method === 'object') {
@@ -126,13 +141,13 @@
 
 // ** example
 // $(function () {
-//     // $('.search__input').searchPopover({container: 'body'})
-//     $('.search__input').searchPopover()
+//     // $('.search__input').inputPopover({container: 'body'})
+//     $('.search__input').inputPopover()
 //
 //     $('.search__input').keyup(function () {
 //         var text = $(this).val()
 //         if (text.length > 2) {
-//             $('.search__input').searchPopover('show', '<div>' + text + ' <a href="#" class="btn btn-primary">Кнопка</a></div>')
+//             $('.search__input').inputPopover('show', '<div>' + text + ' <a href="#" class="btn btn-primary">Кнопка</a></div>')
 //         }
 //
 //     })
